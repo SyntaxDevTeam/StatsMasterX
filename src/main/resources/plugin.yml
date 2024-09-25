@@ -1,8 +1,10 @@
 name: StatMasterX
-version: '0.0.1-SNAPSHOT'
+version: '${version}'
 main: pl.syntaxdevteam.StatMasterX
 api-version: '1.20'
-load: STARTUP
-authors: [ SyntaxDevTeam ]
-description: The intelligent chat formatting plugin with minimessages support!
+authors: [SyntaxDevTeam]
+description: Advanced Player Statistics and Achievements
 website: https://github.com/SyntaxDevTeam
+# This sets PlaceholderAPI as an optional dependency for your plugin.
+depend: []
+softdepend: [PlaceholderAPI, Vault]

@@ -1,9 +1,13 @@
 package pl.syntaxdevteam
 
+import net.milkbowl.vault.economy.Economy
+import net.milkbowl.vault.permission.Permission
+import org.bukkit.Bukkit
+import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import pl.syntaxdevteam.helpers.*
 
-class StatMasterX : JavaPlugin() {
+class StatMasterX : JavaPlugin(), Listener {
     lateinit var logger: Logger
     private var config = getConfig()
     private var debugMode = config.getBoolean("debug")
@@ -13,6 +17,8 @@ class StatMasterX : JavaPlugin() {
     lateinit var messageHandler: MessageHandler
     lateinit var timeHandler: TimeHandler
     private lateinit var updateChecker: UpdateChecker
+    private var econ: Economy? = null
+    private var perms: Permission? = null
 
     override fun onLoad() {
         logger = Logger(this, debugMode)
@@ -20,7 +26,6 @@ class StatMasterX : JavaPlugin() {
 
     override fun onEnable() {
         saveDefaultConfig()
-
         messageHandler = MessageHandler(this)
         timeHandler = TimeHandler(this)
         val author = when (language.lowercase()) {
@@ -40,10 +45,43 @@ class StatMasterX : JavaPlugin() {
             val syntaxDevTeamPlugins = loadedPlugins.filter { it.first != description.name }
             logger.pluginStart(syntaxDevTeamPlugins)
         }
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            Bukkit.getPluginManager().registerEvents(this, this)
+        } else {
+            logger.warning("Cannot find PlaceholderAPI! Functionality may be limited.")
+        }
+        if (!setupService(Economy::class.java)) {
+            logger.warning("Cannot find Vault! Functionality may be limited.")
+        }
+        setupService(Permission::class.java)
+
 
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this, config)
         updateChecker.checkForUpdates()
+    }
+
+    private fun setupService(serviceClass: Class<*>): Boolean {
+        return try {
+            val rsp = server.servicesManager.getRegistration(serviceClass) ?: return false
+            if (serviceClass == Economy::class.java) {
+                econ = rsp.provider as Economy
+            } else if (serviceClass == Permission::class.java) {
+                perms = rsp.provider as Permission
+            }
+            rsp.provider != null
+        } catch (e: Exception) {
+            logger.severe("Error setting up service: ${e.message}")
+            false
+        }
+    }
+
+    fun getEconomy(): Economy? {
+        return econ
+    }
+
+    fun getPermissions(): Permission? {
+        return perms
     }
 
     override fun onDisable() {

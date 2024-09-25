@@ -15,6 +15,9 @@ repositories {
         name = "sonatype"
     }
     maven("https://repo.panda-lang.org/releases")
+
+    maven ("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+    maven ("https://jitpack.io")
 }
 
 dependencies {
@@ -22,6 +25,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     implementation("dev.rollczi:litecommands-bukkit:3.5.0")
+    compileOnly("me.clip:placeholderapi:2.11.6")
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+    // compileOnly("net.luckperms:api:5.4")
 
     implementation("com.googlecode.json-simple:json-simple:1.1.1")
     implementation("net.kyori:adventure-api:4.17.0")
