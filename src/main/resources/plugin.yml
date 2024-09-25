@@ -2,6 +2,7 @@ name: StatMasterX
 version: '${version}'
 main: pl.syntaxdevteam.StatMasterX
 api-version: '1.20'
+load: POSTWORLD
 authors: [SyntaxDevTeam]
 description: Advanced Player Statistics and Achievements
 website: https://github.com/SyntaxDevTeam
