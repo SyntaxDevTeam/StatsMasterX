@@ -1,7 +1,7 @@
 name: StatMasterX
 version: '0.0.1-SNAPSHOT'
 main: pl.syntaxdevteam.StatMasterX
-api-version: '1.21'
+api-version: '1.20'
 load: STARTUP
 authors: [ SyntaxDevTeam ]
 description: The intelligent chat formatting plugin with minimessages support!
