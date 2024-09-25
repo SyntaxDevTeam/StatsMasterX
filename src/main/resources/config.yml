@@ -1,1 +1,10 @@
-#TEST
+# Update check and auto-update settings
+checkForUpdates: true
+autoDownloadUpdates: false
+
+# Debug mode set to true provides more detailed logs in the console
+debug: false
+
+# Should StatsCollector be enabled? Recommended setting: true
+stats:
+  enabled: true
