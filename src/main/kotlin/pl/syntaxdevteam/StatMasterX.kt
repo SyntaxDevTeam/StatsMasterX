@@ -3,7 +3,9 @@ package pl.syntaxdevteam
 import net.milkbowl.vault.economy.Economy
 import net.milkbowl.vault.permission.Permission
 import org.bukkit.Bukkit
+import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.server.PluginEnableEvent
 import org.bukkit.plugin.java.JavaPlugin
 import pl.syntaxdevteam.helpers.*
 
@@ -46,19 +48,46 @@ class StatMasterX : JavaPlugin(), Listener {
             logger.pluginStart(syntaxDevTeamPlugins)
         }
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            Bukkit.getPluginManager().registerEvents(this, this)
+            setupPAPI()
         } else {
             logger.warning("Cannot find PlaceholderAPI! Functionality may be limited.")
         }
-        if (!setupService(Economy::class.java)) {
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            setupVault()
+        } else {
             logger.warning("Cannot find Vault! Functionality may be limited.")
         }
-        setupService(Permission::class.java)
-
 
         statsCollector = StatsCollector(this)
         updateChecker = UpdateChecker(this, config)
         updateChecker.checkForUpdates()
+
+        // Register the PluginEnableEvent listener
+        server.pluginManager.registerEvents(this, this)
+    }
+
+    @EventHandler
+    fun onPluginEnable(event: PluginEnableEvent) {
+        if (event.plugin.description.name == "Vault") {
+            setupVault()
+        }
+        if (event.plugin.description.name == "PlaceholderAPI") {
+            setupPAPI()
+        }
+    }
+
+    private fun setupPAPI() {
+        Bukkit.getPluginManager().registerEvents(this, this)
+    }
+
+    private fun setupVault() {
+        if (!setupService(Economy::class.java)) {
+            logger.warning("Cannot configure Economy service! Is the Economy plugin installed?.")
+            return
+        }
+        if (!setupService(Permission::class.java)) {
+            logger.warning("Cannot set up Permission service! Functionality may be limited.")
+        }
     }
 
     private fun setupService(serviceClass: Class<*>): Boolean {
